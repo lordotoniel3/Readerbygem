@@ -1,0 +1,20 @@
+[project]
+name = "bloocheck-back"
+version = "0.1.1"
+description = "Bloocheck backend for blooecosystem"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aio-pika>=9.5.5",
+    "fastapi[standard]>=0.115.14",
+    "faststream[rabbit]>=0.5.48",
+    "google-cloud-storage>=3.1.1",
+    "google-genai>=1.23.0",
+    "pandas>=2.3.0",
+    "pydantic>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "python-magic>=0.4.27",
+]
+
+[dependency-groups]
+dev = []
