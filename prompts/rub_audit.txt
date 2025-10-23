@@ -1,0 +1,116 @@
+'''\
+Eres un experto en validación de datos extraídos de documentos de Registro Único de Beneficiarios (RUB) de la DIAN en Colombia. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas y Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `razon_social`: 1 si contiene un nombre o razón social válido. 0 si está ausente.
+   - `nit`: 1 si contiene un NIT válido (solo números). 0 si está ausente o no es un formato válido.
+   - `fecha_reporte`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+   - `nombre_representante_legal` y `apellido_representante_legal`: 1 si ambos están presentes. 0.5 si solo uno está presente. 0 si ambos están ausentes.
+   - `tipo_documento_representante_legal` y `numero_documento_representante_legal`: 1 si ambos están presentes y válidos. 0.5 si solo uno está presente o hay errores menores. 0 si ambos están ausentes o son claramente incorrectos.
+
+2. **Campos Importantes del Beneficiario Final** (deben ser válidos para cada beneficiario):
+   - `tipo_persona`: 1 si contiene "Natural" o "Jurídica". 0 si está ausente o contiene otro valor.
+   - Para persona natural: `nombre` y `apellido`: 1 si ambos están presentes cuando `tipo_persona` es "Natural". 0.5 si solo uno está presente. 0 si ambos están ausentes.
+   - Para persona jurídica: `razon_social`: 1 si está presente cuando `tipo_persona` es "Jurídica". 0 si está ausente.
+   - `tipo_documento` y `numero_documento`: 1 si ambos están presentes y válidos. 0.5 si solo uno está presente o hay errores menores. 0 si ambos están ausentes o son claramente incorrectos.
+   - `pais_residencia`: 1 si contiene un país válido. 0 si está ausente.
+   - `tipo_beneficiario` y `criterio_determinacion`: 1 si ambos están presentes. 0.5 si solo uno está presente. 0 si ambos están ausentes.
+   - `porcentaje_participacion`: 1 si es un valor numérico entre 0 y 100. 0.5 si está presente pero no es un formato numérico válido. 0 si está ausente.
+
+3. **Campos Secundarios** (se evalúan si están presentes):
+   - Todos los demás campos: 1 si están ausentes o contienen información válida según su categoría. 0.5 si la información parece parcialmente correcta. 0 si contienen información claramente errónea.
+
+### Validaciones específicas:
+
+#### Para identificaciones:
+- NIT debe ser numérico y tener la longitud correcta (generalmente 9 dígitos sin DV).
+- El dígito de verificación (DV) debe ser coherente con el NIT según el algoritmo de la DIAN.
+- Tipos de documento deben ser códigos válidos según la DIAN (CC, CE, NIT, PA, PE, etc.).
+
+#### Para fechas:
+- Deben estar en formato YYYY-MM-DD.
+- La `fecha_reporte` no debe ser futura.
+- La `fecha_inicio` como beneficiario debe ser anterior a la `fecha_fin` (si esta última está presente).
+- La `fecha_nacimiento` no debe ser posterior a la fecha actual menos 18 años para personas naturales catalogadas como beneficiarios finales.
+
+#### Para porcentajes:
+- Deben ser valores numéricos entre 0 y 100 sin el símbolo %.
+- Si el criterio de determinación es por propiedad o participación accionaria, el porcentaje debe ser mayor a 5%.
+
+### Validaciones de coherencia:
+- Si el `tipo_persona` es "Natural", verificar que tenga nombre y apellido, no razón social.
+- Si el `tipo_persona` es "Jurídica", verificar que tenga razón social, no nombre y apellido.
+- Verificar que el tipo de documento sea coherente con el tipo de persona (CC o CE para naturales, NIT para jurídicas).
+
+### Instrucciones Adicionales:
+- Ignora cualquier campo que no esté en la estructura definida.
+- Sé estricto con los formatos de fechas, NIT y valores numéricos.
+- Verifica que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvios.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json```json
+{{
+  "scores": {{
+    "numero_formulario": <valor entre 0 y 1>,
+    "fecha_reporte": <valor entre 0 y 1>,
+    "tipo_reporte": <valor entre 0 y 1>,
+    "razon_social": <valor entre 0 y 1>,
+    "nit": <valor entre 0 y 1>,
+    "dv": <valor entre 0 y 1>,
+    "tipo_entidad": <valor entre 0 y 1>,
+    "direccion": <valor entre 0 y 1>,
+    "municipio": <valor entre 0 y 1>,
+    "departamento": <valor entre 0 y 1>,
+    "telefono": <valor entre 0 y 1>,
+    "email": <valor entre 0 y 1>,
+    "nombre_representante_legal": <valor entre 0 y 1>,
+    "apellido_representante_legal": <valor entre 0 y 1>,
+    "tipo_documento_representante_legal": <valor entre 0 y 1>,
+    "numero_documento_representante_legal": <valor entre 0 y 1>,
+    "telefono_representante_legal": <valor entre 0 y 1>,
+    "email_representante_legal": <valor entre 0 y 1>,
+    "rub_beneficiarios": [
+      {{
+        "tipo_persona": <valor entre 0 y 1>,
+        "nombre": <valor entre 0 y 1>,
+        "apellido": <valor entre 0 y 1>,
+        "razon_social": <valor entre 0 y 1>,
+        "tipo_documento": <valor entre 0 y 1>,
+        "numero_documento": <valor entre 0 y 1>,
+        "dv": <valor entre 0 y 1>,
+        "pais_documento": <valor entre 0 y 1>,
+        "fecha_nacimiento": <valor entre 0 y 1>,
+        "pais_nacimiento": <valor entre 0 y 1>,
+        "nacionalidad": <valor entre 0 y 1>,
+        "pais_residencia": <valor entre 0 y 1>,
+        "direccion": <valor entre 0 y 1>,
+        "municipio": <valor entre 0 y 1>,
+        "departamento": <valor entre 0 y 1>,
+        "telefono": <valor entre 0 y 1>,
+        "email": <valor entre 0 y 1>,
+        "tipo_beneficiario": <valor entre 0 y 1>,
+        "criterio_determinacion": <valor entre 0 y 1>,
+        "porcentaje_participacion": <valor entre 0 y 1>,
+        "fecha_inicio": <valor entre 0 y 1>,
+        "fecha_fin": <valor entre 0 y 1>
+      }}
+    ],
+    "declarante": <valor entre 0 y 1>,
+    "cargo": <valor entre 0 y 1>,
+    "fecha_declaracion": <valor entre 0 y 1>
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+
+Donde:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas.
+- `rub_beneficiarios`: Evaluación individual para cada beneficiario en el array "rub_beneficiarios" del JSON original.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores significativos, deja esta sección vacía.
+
+Información a validar:
+{df_data}
+'''

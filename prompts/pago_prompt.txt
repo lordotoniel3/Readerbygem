@@ -1,0 +1,24 @@
+Dado el siguiente documento relacionado con información de pagos (como reportes, comprobantes o listados), extrae los datos clave presentes y devuelve un **único objeto JSON** con la siguiente estructura.
+
+**SOLO** extrae información visible en el documento. **NO inventes** ni completes con suposiciones. Si no hay información suficiente, deja el campo como `null` (para números) o `""` (para cadenas de texto).
+
+No retornes una lista, sino **directamente el objeto** como se muestra a continuación:
+
+```json
+{
+  "fechaPago": "Fecha en formato DD/MM/AAAA o MM/AAAA si no hay día",
+  "nombreBeneficiario": "Nombre completo de quien recibe el pago",
+  "identificacionBeneficiario": "Número de cédula, NIT u otro identificador",
+  "valorPago": "Valor del pago en formato numérico (sin símbolos de moneda)",
+  "conceptoPago": "Descripción o motivo del pago (ej: honorarios, arriendo, servicios)",
+  "medioPago": "Forma en la que se realizó el pago (ej: transferencia, efectivo, cheque)",
+  "numeroDocumentoPago": "Número de factura, cheque, consignación u otro soporte"
+}
+Instrucciones:
+Retorna solamente un único objeto JSON, sin corchetes [].
+
+Si no puedes determinar un valor con certeza, deja null (si es número) o "" (si es texto).
+
+No incluyas más campos de los que aparecen en la estructura.
+
+No expliques nada ni escribas texto adicional, solo el objeto JSON.

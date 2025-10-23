@@ -1,0 +1,46 @@
+'''\
+Eres un experto en validación de datos extraídos de facturas. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas y Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `nit`: 1 si el NIT está presente. 0 si falta.
+  Para cada campo obligatorio, si está presente y correctamente extraído, asigna 1; si está ausente o es incorrecto, asigna 0; y si tiene errores leves o parciales, asigna un valor intermedio (por ejemplo, 0.5).
+
+2. **Campos Opcionales** (puntúan 1 si están ausentes o son válidos):
+   - `nit`: 1 si es un NIT válido. 0 si es inválido.
+   - `billExpeditionDate`: 1 si existe y es una fecha en formato YYYY-MM-DD. 0.5 si e suna fecha pero en otro formato. 0 si no es una fecha. 
+   - `billExpirationDate`: 1 si existe y es una fecha en formato YYYY-MM-DD. 0.5 si e suna fecha pero en otro formato. 0 si no es una fecha. 
+   - `supplierName`: 1 si aparenta ser el nombre de algún proveedor de servicios o productos.
+   - `totalAmount`: 1 si es un número de punto flotante. 0 en cualquier otro caso.
+   - `totalTaxAmount`: 1 si es un número de punto flotante. 0 en cualquier otro caso.
+   - `netAmount`: 1 si es un número de punto flotante. 0 en cualquier otro caso.
+
+### Instrucciones Adicionales:
+- Ignora cualquier otro campo que no esté en los previamente mencionados (por ejemplo ignora todos los campos que terminen con el texto "_confidence")
+- Sé estricto con formatos de fechas y valores predefinidos.
+- Asegúrate de que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvio (como un nombre en el campo "nit", por ejemplo).
+- Si existe un error de clasificación ajusta la puntuación correspondiente.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato (un score de "0.8" es incorrecto, debería ser un score de 0.8)
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+{{
+  "scores": {{
+    "nit": <valor entre 0 y 1>,
+    "billExpeditionDate": <valor entre 0 y 1>,
+    "billExpirationDate": <valor entre 0 y 1>,
+    "supplierName": <valor entre 0 y 1>,
+    "totalAmount": <valor entre 0 y 1>,
+    "totalTaxAmount": <valor entre 0 y 1>,
+    "netAmount": <valor entre 0 y 1>,
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+
+Donde las claves significan lo siguiente:
+- `scores`: Puntajes individuales para cada campo básado en las métricas expuestas previamente.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores (es decir todos los campos obligatorios son presentes y válidos, mientras que los campos no obligatorios son válidos) no pongas nada en esta sección.
+
+Información a validar:
+{df_data}
+'''

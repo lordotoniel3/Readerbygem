@@ -1,0 +1,47 @@
+'''\
+Dado el siguiente documento de factura, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que una factura generalmente contiene los siguientes elementos:
+- Información básica de la factura (número o ID de factura, fecha de emisión)
+- Datos del proveedor o emisor (nombre, NIT)
+- Información de los productos o servicios facturados
+- Valores económicos (montos totales, impuestos, valores netos)
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null los campos de los cuales no se tenga información:
+
+```json
+{
+    "nit": "Número de Identificación Tributaria (NIT) del proveedor",
+    "billExpeditionDate": "Fecha de emisión de la factura en formato YYYY-MM-DD",
+    "billExpirationDate": "Fecha de vencimiento o fecha de limite de pago de la factura en formato YYYY-MM-DD",
+    "supplierName": "Nombre del proveedor o emisor de la factura",
+    "totalAmount": "Monto total de la factura",
+    "totalTaxAmount": "Monto total de impuestos aplicados",
+    "netAmount": "Monto neto de la factura (total sin impuestos)",
+    "products": [
+        {
+            "description": "Descripción del producto",
+            "quantity": "Cantidad del producto",
+            "unitPrice": "Precio o valor unitario del producto",
+            "productId": "Identificador único del producto"
+        }
+    ]
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null.
+3. Las fechas deben estar en formato YYYY-MM-DD.
+4. Para valores numéricos, no uses separadores de miles ni millones, únicamente punto decimal cuando sea necesario.
+5. Asegúrate que todos los valores estén usando la misma moneda (idealmente pesos colombianos COP si se puede identificar), especialmente en facturas que listan valores en varias monedas.
+6. Si hay múltiples productos en la factura, incluye todos en el array "facturasProduct".
+7. Para cada producto, extrae identificador, descripción, cantidad, precio unitario e importe total.
+8. Extrae los montos sin símbolos de moneda ni separadores adicionales (solo número con punto decimal si es necesario).
+9. Identifica correctamente el NIT del proveedor, que generalmente aparece junto al nombre del emisor de la factura.
+10. Asegúrate de distinguir entre el monto total (con impuestos), el monto de impuestos y el monto neto (sin impuestos).
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null. El JSON debe ser válido y poder ser parseado en Python sin errores.
+'''

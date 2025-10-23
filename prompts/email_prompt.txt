@@ -1,0 +1,9 @@
+Extrae del siguiente correo electrónico la siguiente información:
+- Email (dirección del remitente)
+- Asunto
+- Cuerpo del mensaje
+- Fecha del correo
+- Número de archivos adjuntos como un entero (0 si no hay adjuntos)
+
+Responde en formato JSON con las siguientes claves:
+"email", "subject", "body", "date", "attachmentCount"

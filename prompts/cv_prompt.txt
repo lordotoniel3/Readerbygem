@@ -1,0 +1,78 @@
+'''\
+Dado el siguiente documento de Hoja de Vida o Currículum Vitae (CV), extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que una hoja de vida generalmente contiene los siguientes elementos:
+- Información personal del candidato (nombre, tipo y número de documento, contacto)
+- Perfil profesional o descripción personal
+- Historial educativo (títulos, instituciones, fechas)
+- Experiencia laboral (puestos, empresas, fechas, responsabilidades)
+- Habilidades técnicas y blandas
+- Conocimiento de idiomas
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "fullName": "Nombre capitalizado (la primera letra de cada nombre en mayúsculas)",
+    "description": "Descripción del perfil profesional o resumen de la persona",
+    "email": "Correo electrónico de contacto",
+    "tel": "Número de teléfono de contacto",
+    "fullAddress": "Dirección, Ciudad, Estado, País",
+
+    "abilities": [
+        {
+            "name": "Nombre de la habilidad técnica o blanda"
+        }
+    ],
+
+    "education": [
+        {
+            "title": "Título académico obtenido o en curso",
+            "place": "Nombre de la institución educativa",
+            "startDate": "Fecha de inicio en formato MM/AAAA",
+            "endDate": "Fecha de finalización en formato MM/AAAA",
+            "type": "Nivel educativo (técnico, pregrado, posgrado, secundaria, otro)"
+        }
+    ],
+    "languages": [
+        {
+            "name": "Nombre del idioma",
+            "level": "Nivel de dominio (básico, intermedio, avanzado, nativo, etc.)",
+            "test": "Certificación o examen realizado (si aplica)"
+        }
+    ],
+    "experiences": [
+        {
+            "jobPosition": "Cargo o posición ocupada",
+            "company": "Nombre de la empresa o empleador",
+            "startDate": "Fecha de inicio en formato MM/AAAA",
+            "endDate": "Fecha de finalización en formato MM/AAAA o 'presente' si es actual",
+            "description": "Descripción de responsabilidades y logros en el puesto"
+        }
+    ],
+
+    
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null (para números y objetos) o "" (para strings).
+3. Para las fechas:
+   - Si solo se menciona el año, incluye únicamente el año en formato "AAAA" sin mes.
+   - Si se menciona mes y año, usa el formato "MM/AAAA".
+   - Si es una posición actual, en la fecha de fin indica 'presente'.
+4. Si el CV está en un idioma diferente, traduce a español toda la información relacionada a experiencia, habilidades, idiomas, descripción y certificaciones, EXCEPTO:
+   - Nombres propios (de la persona, empresas, etc.)
+   - Direcciones, ciudades y países
+   - Nombres de certificaciones o títulos específicos que sean marcas registradas (ej. "Certified Scrum Master")
+5. Para el campo fullName, asegúrate de capitalizar correctamente (primera letra de cada nombre y apellido en mayúscula).
+6. En el campo "habilidad", cada elemento debe ser un objeto con la clave "nombreHabilidad" conteniendo el nombre de la habilidad.
+7. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+8. Para cada experiencia laboral, calcula el total de meses trabajados en base a las fechas de inicio y fin.
+9. Para la educación, identifica correctamente el tipo según corresponda (técnico, pregrado, posgrado, secundaria, otro).
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''

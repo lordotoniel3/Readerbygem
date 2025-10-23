@@ -1,0 +1,78 @@
+'''\
+Dado el siguiente documento de Registro Único de Beneficiarios (RUB) conforme a la normativa de la DIAN en Colombia, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que un documento RUB generalmente contiene los siguientes elementos:
+- Información de la entidad obligada a reportar (nombre, NIT, tipo)
+- Datos del beneficiario final (nombre completo, tipo y número de identificación, país de residencia)
+- Información sobre la naturaleza de la relación (tipo de control, porcentaje de participación)
+- Datos de contacto (dirección, teléfono, email)
+- Fechas relevantes (fecha de reporte, fechas de inicio/fin de la condición de beneficiario)
+- Información complementaria o adicional
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "formNumber": "Número del formulario RUB",
+    "reportingDate": "Fecha de presentación del reporte en formato YYYY-MM-DD",
+    "reportType": "Tipo de reporte (Inicial, Modificación, Actualización)",
+    "companyName": "Nombre o razón social de la entidad que reporta",
+    "nit": "NIT de la entidad reportante sin dígito de verificación",
+    "dv": "Dígito de verificación del NIT",
+    "entityType": "Tipo de entidad reportante según clasificación DIAN",
+    "address": "Dirección completa de la entidad reportante",
+    "department": "Departamento donde está ubicada la entidad",
+    "tel": "Teléfono de contacto de la entidad",
+    "email": "Correo electrónico de contacto",
+    "legalRepresentativeName": "Nombre(s) completo(s) en mayúsculas del representante legal",
+    "legalRepresentativeSurname": "Apellido(s) completo(s) en mayúsculas del representante legal",
+    "legalRepresentativeDocumentType": "Tipo de documento de identidad (CC, CE, PE, etc.) del representante legal",
+    "legalRepresentativeDocumentNumber": "Número del documento de identidad del representante legal",
+    "legalRepresentativeCellPhone": "Teléfono de contacto del representante legal",
+    "legalRepresentativeEmail": "Correo electrónico de contacto del representante legal",
+    "declarant": "Nombre completo de quien declara",
+    "position": "Cargo de quien declara",
+    "declarationDate": "Fecha de la declaración en formato YYYY-MM-DD",
+    "beneficiaries": [
+        {
+            "personType": "Natural o Jurídica",
+            "name": "Nombre completo en mayúsculas del beneficiario (para persona natural)",
+            "surname": "Apellido completo en mayúsculas del beneficiario (para persona natural)",
+            "companyName": "Razón social (para persona jurídica)",
+            "documentType": "Tipo de documento de identidad (CC, CE, NIT, etc.)",
+            "documentNumber": "Número del documento de identidad sin dígito de verificación",
+            "dv": "Dígito de verificación (para NIT)",
+            "documentCountry": "País de emisión del documento de identidad",
+            "birthday": "Fecha de nacimiento o constitución en formato YYYY-MM-DD",
+            "birthCountry": "País de nacimiento o constitución",
+            "nationality": "Nacionalidad del beneficiario final",
+            "residenceCountry": "País de residencia fiscal",
+            "address": "Dirección de residencia o domicilio",
+            "town": "Municipio de residencia o domicilio (para Colombia)",
+            "department": "Departamento de residencia o domicilio (para Colombia)",
+            "tel": "Teléfono de contacto",
+            "email": "Correo electrónico de contacto",
+            "beneficiaryType": "Tipo de beneficiario según clasificación DIAN",
+            "determinationCriteria": "Criterio por el cual se determina como beneficiario final",
+            "participationPercentage": "Porcentaje de participación (numérico)",
+            "startDate": "Fecha de inicio como beneficiario en formato YYYY-MM-DD",
+            "endDate": "Fecha de fin como beneficiario en formato YYYY-MM-DD (si aplica)"
+        }
+    ],
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Para los valores porcentuales, incluye únicamente los valores numéricos sin el símbolo de porcentaje (%).
+3. Si hay múltiples beneficiarios finales, incluye todos en el array "rubBeneficiarios".
+4. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null (para números y objetos) o "" (para strings).
+5. Las fechas deben estar en formato YYYY-MM-DD.
+6. Los tipos de documento deben seguir la nomenclatura estándar de la DIAN: CC (Cédula de Ciudadanía), CE (Cédula de Extranjería), NIT (Número de Identificación Tributaria), PA (Pasaporte), PE (Permiso Especial de Permanencia), etc.
+7. Para los criterios de determinación, usa las categorías establecidas por la DIAN: propiedad directa o indirecta, control, representación, beneficiario de rendimientos, etc.
+8. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''

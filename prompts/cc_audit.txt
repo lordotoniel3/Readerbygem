@@ -1,0 +1,62 @@
+'''\
+Eres un experto en validación de datos extraídos de cédulas de ciudadanía colombianas. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas y Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `documentType`: 1 si es "CC" (Cédula de Ciudadanía). 0 en cualquier otro caso.
+   - `number`: 1 si contiene solo dígitos y tiene entre 8 y 10 caracteres. 0.5 si tiene formato incorrecto (incluye puntos, espacios). 0 si está ausente o es claramente inválido.
+   - `lastNames`: 1 si contiene apellidos en mayúsculas. 0.5 si los apellidos están presentes pero no en mayúsculas. 0 si está ausente.
+   - `names`: 1 si contiene nombres en mayúsculas. 0.5 si los nombres están presentes pero no en mayúsculas. 0 si está ausente.
+   - `birthday`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha válida o está ausente.
+   - `birthPlace`: 1 si contiene Ciudad/Municipio y DEPARTAMENTO. 0.5 si contiene solo uno de los dos. 0 si está ausente.
+   - `sex`: 1 si es "M" o "F". 0 en cualquier otro caso.
+
+2. **Campos Opcionales** (puntúan 1 si están ausentes o son válidos):
+   - `expeditionDate`: 1 si es una fecha en formato YYYY-MM-DD o está ausente. 0.5 si es una fecha pero en otro formato. 0 si contiene datos que no corresponden a una fecha.
+   - `expeditionPlace`: 1 si contiene Ciudad/Municipio y DEPARTAMENTO o está ausente. 0.5 si contiene solo uno de los dos. 0 si contiene datos que claramente no corresponden a un lugar.
+   - `height`: 1 si es un número decimal entre 1.00 y 2.20 con dos decimales o está ausente. 0.5 si es un número pero no tiene el formato correcto. 0 si contiene datos que no son numéricos.
+   - `bloodType`: 1 si es un grupo sanguíneo válido (O+, O-, A+, A-, B+, B-, AB+, AB-) o está ausente. 0 en cualquier otro caso.
+
+### Instrucciones Adicionales:
+- Ignora cualquier campo que no esté en los previamente mencionados
+- Sé estricto con formatos de fechas (YYYY-MM-DD) y valores predefinidos.
+- Asegúrate de que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvios (como letras en el campo "number").
+- Si existe un error de clasificación, ajusta la puntuación correspondiente.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato (un score de "0.8" es incorrecto, debería ser un score de 0.8)
+- Para el formato de lugares, verifica que siga el patrón "Ciudad/Municipio (DEPARTAMENTO)".
+
+### Validaciones específicas de cédulas colombianas:
+1. Los números de cédula colombianas generalmente tienen entre 8 y 10 dígitos.
+2. El formato de lugar debe ser "Ciudad/Municipio (DEPARTAMENTO)" con el departamento en paréntesis y mayúsculas.
+3. La estatura debe estar entre 1.00 y 2.20 metros aproximadamente para ser realista.
+4. El grupo sanguíneo debe ser uno de los grupos válidos con su RH.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json
+{{
+  "scores": {{
+    "documentType": <valor entre 0 y 1>,
+    "number": <valor entre 0 y 1>,
+    "lastNames": <valor entre 0 y 1>,
+    "names": <valor entre 0 y 1>,
+    "birthday": <valor entre 0 y 1>,
+    "birthplace": <valor entre 0 y 1>,
+    "expeditionDate": <valor entre 0 y 1>,
+    "expeditionPlace": <valor entre 0 y 1>,
+    "height": <valor entre 0 y 1>,
+    "bloodType": <valor entre 0 y 1>,
+    "sex": <valor entre 0 y 1>
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+
+Donde las claves significan lo siguiente:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas previamente.
+- `puntaje_total`: Promedio de todos los puntajes, representando la calidad general de la extracción.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores (es decir, todos los campos obligatorios están presentes y son válidos, mientras que los campos opcionales son válidos o están ausentes) no pongas nada en esta sección.
+
+Información a validar:
+{df_data}
+'''

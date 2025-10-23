@@ -1,0 +1,41 @@
+'''\
+Eres un experto en validación de datos financieros extraídos desde documentos de pago. Evalúa cada objeto del JSON proporcionado y asigna un score de calidad entre 0 y 1 para cada campo clave, de acuerdo con estas reglas. No escribas código Python ni comentes sobre lo que haces, solo devuelve el JSON.
+
+### Reglas de Validación:
+
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `fecha_pago`: **1** si tiene formato válido DD/MM/AAAA o MM/AAAA. **0** si no tiene o es inválido.
+   - `nombre_beneficiario`: **1** si está presente y correctamente capitalizado. **0** si falta o es incoherente.
+   - `identificacion_beneficiario`: **1** si tiene al menos 6 dígitos y es coherente con documentos reales (puede contener puntos, guiones o letras si es NIT, CE, etc.).
+   - `valor_pago`: **1** si es un número mayor a 0 sin letras ni símbolos. **0** si no es numérico o está ausente.
+   - `concepto_pago`: **1** si describe adecuadamente el motivo del pago. **0** si está vacío.
+   - `medio_pago`: **1** si está entre los valores válidos: `transferencia`, `efectivo`, `cheque`, `consignación`, `otro`. **0** si es inválido.
+   - `numero_documento_pago`: **1** si contiene un número o texto alfanumérico coherente (mínimo 4 caracteres). **0** si está vacío.
+
+2. Si el documento contiene múltiples pagos, calcula un promedio por campo.
+
+3. Usa codificación UTF-8 y penaliza errores ortográficos evidentes o campos genéricos como `"n/a"`, `"no aplica"` o similares.
+
+### Salida requerida (formato obligatorio):
+Devuelve **únicamente** un JSON con esta estructura:
+
+```json
+{{
+  "scores": {{
+    "fecha_pago": <valor entre 0 y 1>,
+    "nombre_beneficiario": <valor entre 0 y 1>,
+    "identificacion_beneficiario": <valor entre 0 y 1>,
+    "valor_pago": <valor entre 0 y 1>,
+    "concepto_pago": <valor entre 0 y 1>,
+    "medio_pago": <valor entre 0 y 1>,
+    "numero_documento_pago": <valor entre 0 y 1>
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+Donde las claves significan lo siguente:
+- `scores`: Puntajes individuales para cada campo básado en las métricas expuestas previamente.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores (es decir todos los campos obligatorios son presentes y válidos, mientras que los campos no obligatorios son válidos) no pongas nada en esta sección.
+
+Información a validar:
+{df_data}
+'''

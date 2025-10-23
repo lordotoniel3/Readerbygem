@@ -1,0 +1,142 @@
+'''
+Eres un experto en validación de datos extraídos de documentos de Registro Único Tributario (RUT) de la DIAN en Colombia. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas y Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - Para personas jurídicas: `companyName`: 1 si contiene una razón social válida. 0 si está ausente.
+   - Para personas naturales: `firstSurname` y `firstName`: 1 si ambos están presentes. 0.5 si solo uno está presente. 0 si ambos están ausentes.
+   - `documentType`: 1 si contiene un tipo válido (CC, CE, NIT, etc.). 0 si está ausente o inválido.
+   - `documentNumber`: 1 si contiene un número válido según el tipo de documento. 0 si está ausente o claramente incorrecto.
+   - `dv`: 1 si contiene un dígito de verificación válido cuando el tipo de documento es NIT. 0 si está ausente cuando es requerido o es incorrecto.
+   - `issueDate`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+   - `rutStatus`: 1 si contiene un estado válido (Activo, Suspendido, Cancelado). 0 si está ausente o contiene otro valor.
+
+2. **Campos de Actividades Económicas** (deben ser válidos para cada actividad):
+   - `ciuuCode`: 1 si contiene un código CIIU válido de 4 dígitos. 0 si está ausente o no cumple con el formato.
+   - `description`: 1 si contiene una descripción coherente con el código CIIU. 0.5 si está presente pero parece incompleta. 0 si está ausente.
+   - `mainActivity`: 1 si indica claramente "Si" o "No". 0 si está ausente o contiene otro valor.
+   - `startDate`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+
+3. **Campos de Responsabilidades** (deben ser válidos para cada responsabilidad):
+   - `code`: 1 si contiene un código numérico válido según catálogo DIAN. 0 si está ausente o no es un código DIAN reconocible.
+   - `description`: 1 si contiene una descripción coherente con el código. 0.5 si está presente pero parece incompleta. 0 si está ausente.
+   - `startDate`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+
+4. **Campos de Ubicación** (se evalúan si están presentes):
+   - `address`: 1 si contiene una dirección con formato válido. 0.5 si está presente pero parece incompleta. 0 si está ausente.
+   - `city`, `department` y `country`: 1 si contienen valores válidos y coherentes entre sí. 0.5 si hay inconsistencias menores. 0 si están ausentes o son claramente incorrectos.
+
+5. **Campos Secundarios** (se evalúan si están presentes):
+   - Todos los demás campos: 1 si están ausentes o contienen información válida según su categoría. 0.5 si la información parece parcialmente correcta. 0 si contienen información claramente errónea.
+
+### Validaciones específicas:
+
+#### Para identificaciones:
+- NIT debe ser numérico y tener la longitud correcta (generalmente 9 dígitos sin DV).
+- El dígito de verificación (DV) debe ser coherente con el NIT según el algoritmo de la DIAN.
+- Tipos de documento deben ser códigos válidos según la DIAN (CC, CE, NIT, PA, PE, etc.).
+
+#### Para fechas:
+- Deben estar en formato YYYY-MM-DD.
+- La `issueDate` no debe ser futura.
+- La `birthDate` no debe ser posterior a la fecha actual menos 18 años para personas naturales.
+- La `activityStartDate` debe ser anterior o igual a la fecha de expedición del RUT.
+
+#### Para códigos CIIU:
+- Deben ser códigos de 4 dígitos según la clasificación CIIU Rev. 4 adaptada para Colombia.
+- Debe existir al menos una actividad marcada como principal.
+
+#### Para responsabilidades tributarias:
+- Los códigos deben corresponder a responsabilidades válidas según el catálogo de la DIAN.
+- Las descripciones deben ser coherentes con los códigos asociados.
+
+### Validaciones de coherencia:
+- Si hay `firstName` y `firstSurname`, no debería haber `companyName` y viceversa.
+- El tipo de documento debe ser coherente con el tipo de contribuyente (CC o CE para personas naturales, NIT para jurídicas).
+- Si el `contributorType` indica "Persona Jurídica", debe tener un representante legal válido.
+- Las fechas deben ser cronológicamente coherentes (nacimiento, inicio actividades, expedición, actualizaciones).
+
+### Instrucciones Adicionales:
+- Ignora cualquier campo que no esté en la estructura definida.
+- Sé estricto con los formatos de fechas, NIT y valores numéricos.
+- Verifica que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvios.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json
+{{
+  "scores": {{
+    "formNumber": <valor entre 0 y 1>,
+    "expeditionDate": <valor entre 0 y 1>,
+    "lastUpdateDate": <valor entre 0 y 1>,
+    "documentType": <valor entre 0 y 1>,
+    "documentNumber": <valor entre 0 y 1>,
+    "dv": <valor entre 0 y 1>,
+    "companyName": <valor entre 0 y 1>,
+    "firstSurname": <valor entre 0 y 1>,
+    "firstName": <valor entre 0 y 1>,
+    "birthday": <valor entre 0 y 1>,
+    "birthCountry": <valor entre 0 y 1>,
+    "birthDepartment": <valor entre 0 y 1>,
+    "birthCity": <valor entre 0 y 1>,
+    "address": <valor entre 0 y 1>,
+    "country": <valor entre 0 y 1>,
+    "department": <valor entre 0 y 1>,
+    "city": <valor entre 0 y 1>,
+    "email": <valor entre 0 y 1>,
+    "phone": <valor entre 0 y 1>,
+    "cellphone": <valor entre 0 y 1>,
+    "electronicNotification": <valor entre 0 y 1>,
+    "contributorType": <valor entre 0 y 1>,
+    "regime": <valor entre 0 y 1>,
+    "activityStartDate": <valor entre 0 y 1>,
+    "rutStatus": <valor entre 0 y 1>,
+    "activities": [
+      {{
+        "ciiuCode": <valor entre 0 y 1>,
+        "description": <valor entre 0 y 1>,
+        "mainActivity": <valor entre 0 y 1>,
+        "startDate": <valor entre 0 y 1>
+      }}
+    ],
+    "responsibilities": [
+      {{
+        "code": <valor entre 0 y 1>,
+        "description": <valor entre 0 y 1>,
+        "startDate": <valor entre 0 y 1>,
+        "endDate": <valor entre 0 y 1>
+      }}
+    ],
+    "establishments": [
+      {{
+        "name": <valor entre 0 y 1>,
+        "address": <valor entre 0 y 1>,
+        "city": <valor entre 0 y 1>,
+        "department": <valor entre 0 y 1>,
+        "mainActivity": <valor entre 0 y 1>,
+        "openingDate": <valor entre 0 y 1>
+      }}
+    ],
+    "representatives": {{
+      "documentType": <valor entre 0 y 1>,
+      "documentNumber": <valor entre 0 y 1>,
+      "fullName": <valor entre 0 y 1>,
+      "position": <valor entre 0 y 1>
+    }}
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+
+Donde:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas.
+- `activities`: Evaluación individual para cada actividad económica en el array "actividades_economicas" del JSON original.
+- `responsibilities`: Evaluación individual para cada responsabilidad en el array "responsabilidades" del JSON original.
+- `establishments`: Evaluación individual para cada establecimiento en el array "establecimientos" del JSON original.
+- `representatives`: Evaluación de los campos del representante legal.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores significativos, deja esta sección vacía.
+
+Información a validar:
+{df_data}
+'''

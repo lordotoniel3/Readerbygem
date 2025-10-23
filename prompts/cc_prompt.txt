@@ -1,0 +1,44 @@
+'''\
+Dado el siguiente documento de una cédula de ciudadanía colombiana, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en la imagen o documento de la cédula. NUNCA inventes información ni hagas suposiciones.
+
+Para verificar la autenticidad, ten en cuenta que la cédula de ciudadanía colombiana tiene elementos específicos como:
+- Número de cédula (generalmente entre 8 y 10 dígitos)
+- Apellidos y nombres del ciudadano
+- Fecha de nacimiento con formato DD-MMM-AAAA (ejemplo: 15-ENE-1985)
+- Lugar de nacimiento
+- Fecha de expedición con formato DD-MMM-AAAA
+- Lugar de expedición
+- Estatura en metros (ejemplo: 1.70)
+- Grupo sanguíneo y RH (ejemplo: O+)
+- Sexo (M/F)
+- Una fotografía del ciudadano
+- Firma del ciudadano
+- Huella dactilar (generalmente del índice derecho)
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "documentType": "CC",
+    "number": "Número de la cédula, solo dígitos sin espacios ni puntos",
+    "lastNames": "Apellidos en mayúsculas como aparecen en la cédula",
+    "names": "Nombres en mayúsculas como aparecen en la cédula",
+    "birthday": "Fecha de nacimiento en formato YYYY-MM-DD",
+    "birthPlace": "Ciudad/Municipio (DEPARTAMENTO)",
+    "expeditionDate": "Fecha de expedición en formato YYYY-MM-DD",
+    "expeditionPlace": "Ciudad/Municipio (DEPARTAMENTO)",
+    "height": "Estatura en metros (formato: 0.00)",
+    "bloodType": "Grupo sanguíneo y RH (ejemplo: O+)",
+    "sex": "M|F",
+}
+```
+
+Instrucciones específicas:
+1. Mantén el formato original de lugares (ciudad/municipio y departamento) tal como aparecen en la cédula.
+2. La estatura debe estar en metros con dos decimales.
+3. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''

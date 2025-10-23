@@ -1,0 +1,147 @@
+'''\
+Eres un experto en validación de datos extraídos de certificados de existencia y representación legal. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglasy Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `social`: 1 si contiene una razón social válida. 0 si está ausente.
+   - `nit`: 1 si contiene un NIT válido con formato XXXXXXXXX-X. 0.5 si está presente pero sin formato correcto. 0 si está ausente.
+   - `legalOrganization`: 1 si contiene un tipo válido (SAS, LTDA, S.A., etc.). 0 si está ausente.
+   - `comercialRegistration`: 1 si contiene un número de matrícula válido. 0 si está ausente.
+   - `enrollmentDate`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+   - `enrollmentStatus`: 1 si contiene un estado válido (Activa, Suspendida, Cancelada). 0 si está ausente.
+   - `social`: 1 si contiene una descripción coherente del objeto social. 0.5 si está presente pero parece incompleta. 0 si está ausente.
+
+2. **Campos de Fechas** (deben ser válidos si están presentes):
+   - Todas las fechas: 1 si están en formato YYYY-MM-DD. 0.5 si son fechas válidas en otro formato. 0 si no son fechas válidas o contienen valores claramente incorrectos.
+   - `expeditionDate`: No debe ser futura.
+   - `constitutionDate`: Debe ser anterior a `enrollmentDate`.
+   - `enrollmentDate`: Debe ser posterior a `constitutionDate` si está presente.
+
+3. **Campos de Contacto** (deben ser válidos si están presentes):
+   - `commercialEmail`: 1 si tienen formato de email válido o está ausente. 0 si contiene valores que no son emails.
+   - `commercialTel`: 1 si contienen números válidos o están ausentes. 0.5 si están presentes pero parecen incompletos. 0 si contienen valores claramente incorrectos.
+   - `web`: 1 si contiene una URL válida o está ausente. 0 si contiene un valor que no es una URL.
+
+4. **Campos de Actividad Económica**:
+   - `ciiu`: 1 si contiene un código CIIU válido (formato como C2512). 0.5 si está presente pero no cumple formato estándar. 0 si está ausente cuando debería estar presente.
+   - `ciiuDescription`: 1 si contiene una descripción coherente con el código CIIU. 0.5 si está presente pero parece incompleta. 0 si está ausente cuando hay código CIIU.
+
+5. **Campos de Capital y Valores Monetarios**:
+   - Todos los valores monetarios: 1 si son valores numéricos válidos o están ausentes. 0 si están presentes pero no son numéricos.
+
+6. **Campos de Arrays** (socios, representantes_legales, establecimientos):
+   - 1 si es un array con elementos válidos o está ausente. 0.5 si es un array vacío. 0 si no es un array o contiene elementos inválidos.
+
+### Validaciones específicas para Arrays:
+
+#### Para socios:
+- Cada socio debe tener al menos `name` y `idNumber`.
+- Si se incluyen `sharesNumber` y `nominalValue`, el `participationValue` debe ser aproximadamente coherente.
+- La suma de participaciones no debe exceder el 100% significativamente.
+
+#### Para representantes_legales:
+- Cada representante debe tener al menos `name`, `position` y `idNumber`.
+- `isSubstitute` debe ser "Si" o "No" si está presente.
+- Debe existir al menos un representante principal (isSubstitute = "No" o ausente).
+
+#### Para establecimientos:
+- Cada establecimiento debe tener al menos `name` y `address`.
+- `registrationDate` debe ser posterior o igual a la fecha de matrícula de la empresa.
+- `ciiu` debe seguir formato estándar si está presente.
+
+### Validaciones de coherencia:
+- El `nit` debe tener el formato correcto con dígito de verificación.
+- Las fechas deben ser cronológicamente coherentes.
+
+### Instrucciones Adicionales:
+- Ignora cualquier campo que no esté en la estructura definida.
+- Sé estricto con los formatos de fechas, NIT y valores numéricos.
+- Verifica que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvios.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato.
+- Para campos de arrays, evalúa tanto la estructura del array como la validez de cada elemento.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json
+{{
+  "scores": {{
+    "expeditionDate": <valor entre 0 y 1>,
+    "verificationCode": <valor entre 0 y 1>,
+    "receiptNumber": <valor entre 0 y 1>,
+    "social": <valor entre 0 y 1>,
+    "acronym": <valor entre 0 y 1>,
+    "nit": <valor entre 0 y 1>,
+    "legalOrganization": <valor entre 0 y 1>,
+    "category": <valor entre 0 y 1>,
+    "comercialRegistration": <valor entre 0 y 1>,
+    "enrollmentDate": <valor entre 0 y 1>,
+    "address": <valor entre 0 y 1>,
+    "mainAddress": <valor entre 0 y 1>,
+    "commercialTel": <valor entre 0 y 1>,
+    "commercialEmail": <valor entre 0 y 1>,
+    "web": <valor entre 0 y 1>,
+    "constitutionDate": <valor entre 0 y 1>,
+    "social": <valor entre 0 y 1>,
+    "ciuu": <valor entre 0 y 1>,
+    "ciuuDescription": <valor entre 0 y 1>,
+    "economicSector": <valor entre 0 y 1>,
+    "totalAssets": <valor entre 0 y 1>,
+    "companySize": <valor entre 0 y 1>,
+    "ordinaryActivityIncome": <valor entre 0 y 1>,
+    "capitalType": <valor entre 0 y 1>,
+    "capitalValue": <valor entre 0 y 1>,
+    "partners": [
+      {{
+        "name": <valor entre 0 y 1>,
+        "idType": <valor entre 0 y 1>,
+        "idNumber": <valor entre 0 y 1>,
+        "sharesNumber": <valor entre 0 y 1>,
+        "participationValue": <valor entre 0 y 1>,
+        "participationPercent": <valor entre 0 y 1>
+      }}
+    ],
+    "legalRepresentatives": [
+      {{
+        "position": <valor entre 0 y 1>,
+        "name": <valor entre 0 y 1>,
+        "idType": <valor entre 0 y 1>,
+        "idNumber": <valor entre 0 y 1>,
+        "isSubstitute": <valor entre 0 y 1>,
+        "namingDate": <valor entre 0 y 1>,
+        "namingDoc": <valor entre 0 y 1>
+      }}
+    ],
+    "representativePowers": <valor entre 0 y 1>,
+    "representativeLimits": <valor entre 0 y 1>,
+    "fiscalReviewer": <valor entre 0 y 1>,
+    "establishments": [
+      {{
+        "name": <valor entre 0 y 1>,
+        "registration": <valor entre 0 y 1>,
+        "registrationDate": <valor entre 0 y 1>,
+        "address": <valor entre 0 y 1>,
+        "city": <valor entre 0 y 1>,
+        "tel_1": <valor entre 0 y 1>,
+        "tel_2": <valor entre 0 y 1>,
+        "email": <valor entre 0 y 1>,
+        "mainActivity": <valor entre 0 y 1>,
+        "activityDescription": <valor entre 0 y 1>,
+        "establishmentValue": <valor entre 0 y 1>
+      }}
+    ],
+    "enrollmentStatus": <valor entre 0 y 1>,
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+
+Donde:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas.
+- `partners`: Evaluación individual para cada socio en el array "partners" del JSON original.
+- `legalRepresentatives`: Evaluación individual para cada representante legal en el array "legalRepresentatives" del JSON original.
+- `establishments`: Evaluación individual para cada establecimiento en el array "establishments" del JSON original.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores significativos, deja esta sección vacía.
+
+Información a validar:
+{df_data}
+'''

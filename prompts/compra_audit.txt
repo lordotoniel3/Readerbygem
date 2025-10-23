@@ -1,0 +1,81 @@
+'''\
+Eres un experto en validación de datos extraídos de órdenes de compra. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas y Necesito que me proporciones un score, no necesito un codigo en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `orderNumber`: 1 si contiene un número o código de orden válido. 0 si está ausente.
+   - `issueDate`: 1 si es una fecha en formato YYYY-MM-DD. 0.5 si es una fecha pero en otro formato. 0 si no es una fecha o está ausente.
+   - `buyerName`: 1 si contiene un nombre o razón social válido. 0 si está ausente.
+   - `providerName`: 1 si contiene un nombre o razón social válido. 0 si está ausente.
+   - `total`: 1 si es un valor numérico. 0.5 si está presente pero no es numérico. 0 si está ausente.
+
+2. **Campos Importantes** (deben ser válidos si están presentes):
+   - `currency`: 1 si contiene un código de moneda válido (USD, EUR, COP, etc.) o está ausente. 0 si contiene un valor que no es un código de moneda.
+   - `buyerId`: 1 si contiene un número de identificación fiscal o está ausente. 0 si contiene un valor claramente incorrecto.
+   - `providerId`: 1 si contiene un número de identificación fiscal o está ausente. 0 si contiene un valor claramente incorrecto.
+   - `items`: 1 si es un array con al menos un elemento o está ausente. 0.5 si es un array vacío. 0 si no es un array.
+   - `subTotal`: 1 si es un valor numérico o está ausente. 0 si está presente pero no es numérico.
+   - `taxes`: 1 si es un valor numérico o está ausente. 0 si está presente pero no es numérico.
+
+3. **Campos Secundarios** (se evalúan si están presentes):
+   - Todos los demás campos: 1 si están ausentes o contienen información válida según su categoría. 0.5 si la información parece parcialmente correcta. 0 si contienen información claramente errónea.
+
+### Validaciones específicas:
+
+#### Para los ítems:
+- Cada ítem debe tener al menos `description` y `quantity`.
+- Si se incluye `unitaryPrice` y `quantity`, el `subTotal` debe ser aproximadamente igual al producto de ambos.
+
+#### Para valores monetarios:
+- Deben ser valores numéricos sin símbolos de moneda ni separadores de miles.
+- El `total` debe ser aproximadamente igual a `subTotal` + `taxes` - `discounts`.
+
+#### Para fechas:
+- Deben estar en formato YYYY-MM-DD.
+- La fecha de emisión no debe ser futura.
+
+### Instrucciones Adicionales:
+- Ignora cualquier campo que no esté en la estructura definida.
+- Sé estricto con los formatos de fechas y valores numéricos.
+- Verifica que cada dato corresponda a la categoría definida por el nombre. Penaliza errores obvios.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json
+{{
+  "scores": {{
+    "orderNumber": <valor entre 0 y 1>,
+    "issueDate": <valor entre 0 y 1>,
+    "currency": <valor entre 0 y 1>,
+    "buyerName": <valor entre 0 y 1>,
+    "buyerId": <valor entre 0 y 1>,
+    "buyerAddress": <valor entre 0 y 1>,
+    "buyerTel": <valor entre 0 y 1>,
+    "buyerEmail": <valor entre 0 y 1>,
+    "providerName": <valor entre 0 y 1>,
+    "providerId": <valor entre 0 y 1>,
+    "providerAddress": <valor entre 0 y 1>,
+    "providerTel": <valor entre 0 y 1>,
+    "providerEmail": <valor entre 0 y 1>,
+    "items": <valor entre 0 y 1>,
+    "subTotal": <valor entre 0 y 1>,
+    "taxes": <valor entre 0 y 1>,
+    "discounts": <valor entre 0 y 1>,
+    "total": <valor entre 0 y 1>,
+    "paymentMethod": <valor entre 0 y 1>,
+    "deliveryTime": <valor entre 0 y 1>,
+    "deliveryAddress": <valor entre 0 y 1>,
+    "observations": <valor entre 0 y 1>
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+
+Donde:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas.
+- `explicacion`: Breve informe de los errores encontrados. Si no hay errores significativos, deja esta sección vacía.
+
+Información a validar:
+{df_data}
+'''

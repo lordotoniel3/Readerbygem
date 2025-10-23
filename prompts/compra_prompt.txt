@@ -1,0 +1,63 @@
+'''\
+Dado el siguiente documento de una orden de compra, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que una orden de compra generalmente contiene los siguientes elementos:
+- Número de orden de compra
+- Fecha de emisión
+- Información del comprador (nombre, dirección, NIT/RUT/identificación fiscal)
+- Información del proveedor (nombre, dirección, NIT/RUT/identificación fiscal)
+- Lista de productos o servicios solicitados (descripción, cantidad, precio unitario, subtotal)
+- Valores totales (subtotal, impuestos, descuentos, total)
+- Términos y condiciones (forma de pago, plazos de entrega, etc.)
+- Firmas o autorizaciones (cuando aplique)
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "orderNumber": "Número de la orden de compra",
+    "issueDate": "Fecha de emisión en formato YYYY-MM-DD",
+    "currency": "Código de la moneda (ejemplo: COP, USD, EUR)",
+    "buyerName": "Nombre o razón social del comprador",
+    "buyerId": "NIT/RUT/identificación fiscal del comprador",
+    "buyerAddress": "Dirección completa del comprador",
+    "buyerTel": "Teléfono del comprador",
+    "buyerEmail": "Email del comprador",
+    "providerName": "Nombre o razón social del proveedor",
+    "providerId": "NIT/RUT/identificación fiscal del proveedor",
+    "providerAddress": "Dirección completa del proveedor",
+    "providerTel": "Teléfono del proveedor",
+    "providerEmail": "Email del proveedor",
+    "subTotal": "Suma de subtotales antes de impuestos (numérico)",
+    "taxes": "Total de impuestos (numérico)",
+    "discounts": "Total de descuentos aplicados (numérico)",
+    "total": "Valor total de la orden (numérico)",
+    "paymentMethod": "Método y condiciones de pago",
+    "deliveryTime": "Plazo o fecha de entrega",
+    "deliveryAddress": "Dirección o lugar de entrega",
+    "observations": "Observaciones adicionales",
+    "items": [
+        {
+            "description": "Descripción del producto o servicio",
+            "quantity": "Cantidad solicitada (numérico)",
+            "measureUnit": "Unidad de medida (ejemplo: unidades, kg, horas)",
+            "unitaryPrice": "Precio por unidad (numérico)",
+            "subTotal": "Subtotal del ítem (numérico)"
+        }
+    ],
+    
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Para los valores monetarios, incluye únicamente los valores numéricos sin símbolos de moneda ni separadores de miles.
+3. Si hay múltiples productos o servicios, incluye todos en el array "items".
+4. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null (para números y objetos) o "" (para strings).
+5. Las fechas deben estar en formato YYYY-MM-DD.
+6. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''

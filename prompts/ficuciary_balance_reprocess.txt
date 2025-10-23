@@ -1,0 +1,41 @@
+    '''\ 
+    Dado el siguiente documento de un informe de saldos fiduciarios, extrae la información relevante y retorna una lista de JSON con estructura definida.
+
+    Sólamente retorna la información que esté presente en la imagen o documento de los saldos. NUNCA inventes información ni hagas suposiciones.
+
+    En este documento entonctaras los siguientes elementos:
+
+    -Tablas de encargos: Las identificas ya que tienen un encabezado color gris con el nombre del proyecto
+
+    -Tablas de cuentas: El encabezado de la primera columna dice 'Cuentas'
+
+    Ten en cuenta estas tablas porque usaras tabla de encargos para llenar la lista que te estoy pidiendo y no debes tomar la informacion de las tablas de cuentas
+
+    Solo debes llenar la lista con la informacion desde el encargo {last_order} sin incluirlo
+
+    La informacion que debes extraer es la siguiente, se muy estricto con el formato. Debes llenar con null o "" los campos que no puedas encontrar en el documento, 
+    TIENES QUE ENCONTRAR TODOS LOS ENCARGOS QUE SE ENCUENTREN EN EL DOCUMENTO, NO DEBES DETENERTE A MENOS QUE NO ENCUENTRES MAS TABLAS DE ENCARGOS, DE SER ESTE EL CASO ASEGURATE DE HABER INCLUIDO EL ULTIMO
+
+    ```json:
+
+    ["accountNumber":"El numero del encargo, puede llamarse 'Encargo' o 'Identificacion' o 'Inversion'. Expresalo como un string",
+
+                "accountType":"Siempre llenalo como 'encargo'",
+
+                "totalBalance":"Campo asociado a 'Saldo Total' o en el caso de Fiduciaria Alianza y Fiduciaria Davivienda 'Saldo' (numerico postivo)  ",
+
+                "exchangeBalance":"Campo asociado a 'Saldo Canje' (numerico postivo) solo esta en Fiduciaria Bogotá",
+
+                "availableBalance":"Campo asociado a 'Saldo Disponible' o 'Disponible' o en el caso de Fiduciaria Alianza 'Saldo', no importa que sea igual a totalBalance en Fiduciaria Alianza (numerico postivo)",
+
+                "fund":"La cadena de texto que se enceuntra siempre en el encabezado del encargo en Fiduciaria Davivienda, este suele empezar con 'Identificacion' y seguido tiene un numero de identificacion, excluye la palabra Identificacion y el numero que le sigue,en Fiduciaria Bogotá esta en el campo Tercero/Alias, en Fiduciaria Alianza esta en 'Nombre', en estos 2 casos incluye todo el texto que aparece en estos",
+
+                "date": "La fecha de la cuenta, si no esta presente llenalo con la fecha del balanceDatea la cual se encuentra en el encabezado del documento, si no esta presente llenalo como null. Formato YYYY-MM-DD"]
+
+    TODOS LOS VALORES NUMERICOS LOS DEBES DEVOLVER COMO SOLO NUMERICOS, por ejemplo no devuelvas "10.5", devuelve 10.5
+
+
+
+    No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+
+    '''

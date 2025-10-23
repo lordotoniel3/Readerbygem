@@ -1,0 +1,102 @@
+'''\
+Eres un experto en validación de datos extraídos de documentos de informe de saldos de fiduciarias. Evalúa cada campo del JSON proporcionado asignando un puntaje individual de 0 a 1 según estas reglas específicas para documentos de saldos fiduciarios. Necesito que me proporciones un score, no necesito un código en python, ciñete a los resultados reales que encuentres:
+
+### Reglas de Validación:
+
+1. **Campos Obligatorios** (deben estar presentes y ser válidos):
+   - `bankName`: 1 si contiene exactamente uno de estos nombres válidos: "Fiduciaria Davivienda", "Fiduciaria Bogotá", "Fiduciaria Alianza". 0 si está ausente o contiene otro valor.
+   - `currency`: 1 si contiene "COP" o "USD". 0.5 si contiene otra moneda válida. 0 si está ausente o es inválido.
+   - `balanceDetail`: 1 si es un array que contiene al menos un objeto válido. 0 si está vacío o ausente.
+
+2. **Campos Específicos por Fiduciaria**:
+   - `bankNit`: 1 si está presente y es numérico (solo requerido para Fiduciaria Bogotá). 1 si está ausente para otras fiduciarias. 0 si está presente pero es inválido.
+   - `accountHolder`: 1 si está presente y contiene texto válido (solo requerido para Fiduciaria Bogotá). 1 si está ausente para otras fiduciarias. 0 si está presente pero es inválido.
+   - `balanceDate`: 1 si es una fecha válida en formato YYYY-MM-DD. 0.5 si es una fecha en otro formato. 0 si no es una fecha válida. Nota: No requerido para Fiduciaria Davivienda.
+
+3. **Campos de Totales (solo Fiduciaria Bogotá)**:
+   - `totalOrders`: 1 si es un valor numérico positivo cuando `bankName` es "Fiduciaria Bogotá". 1 si está ausente para otras fiduciarias. 0 si está presente pero es inválido.
+   - `totalOrdersExchange`: Similar validación que `totalOrders`.
+   - `totalOrdersAvailable`: Similar validación que `totalOrders`.
+   - `totalAccounts`: Similar validación que `totalOrders`.
+   - `totalAccountsExchange`: Similar validación que `totalOrders`.
+   - `totalAccountsAvailable`: Similar validación que `totalOrders`.
+
+4. **Campos de Balance Detail** (deben ser válidos para cada entrada):
+   - `accountNumber`: 1 si está presente y es un string válido. 0 si está ausente o vacío.
+   - `accountType`: 1 si contiene exactamente "encargo". 0 si contiene otro valor o está ausente.
+   - `totalBalance`: 1 si es un valor numérico positivo. 0 si está ausente o no es numérico.
+   - `exchangeBalance`: 1 si es numérico positivo cuando está presente (solo para Fiduciaria Bogotá). 1 si está ausente para otras fiduciarias. 0 si está presente pero es inválido.
+   - `availableBalance`: 1 si es un valor numérico positivo. 0 si está ausente o no es numérico.
+   - `fund`: 1 si contiene texto válido describiendo el fondo. 0 si está ausente o vacío.
+   - `date`: 1 si es una fecha válida en formato YYYY-MM-DD. 0.5 si es una fecha en otro formato. 0 si no es válida.
+
+### Validaciones específicas:
+
+#### Para identificaciones:
+- `bankNit` debe ser completamente numérico, sin dígito de verificación.
+
+#### Para fechas:
+- Deben estar en formato YYYY-MM-DD.
+- `balanceDate` no debe ser futura.
+- `date` en balanceDetail puede ser igual a `balanceDate` si no está específica.
+
+#### Para valores numéricos:
+- Deben ser valores numéricos (enteros o decimales) sin símbolos de moneda.
+- Todos los saldos deben ser positivos.
+
+#### Para nombres de fiduciarias:
+- Solo son válidos los nombres exactos: "Fiduciaria Davivienda", "Fiduciaria Bogotá", "Fiduciaria Alianza".
+
+### Validaciones de coherencia:
+- Verificar que los valores de `total_orders`, `total_orders_exchange`, `total_orders_available` sean coherentes entre sí cuando están presentes.
+- Verificar que los valores de `total_accounts`, `total_accounts_exchange`, `total_accounts_available` sean coherentes entre sí cuando están presentes.
+- Verificar que la suma de `total_balance` en `balance_detail` sea coherente con `total_orders` cuando ambos están presentes.
+- Para Fiduciaria Alianza, validar que `total_balance` y `available_balance` sean iguales en cada entrada de `balance_detail`.
+
+### Instrucciones Adicionales:
+- Evalúa estrictamente según el tipo de fiduciaria identificada en `bank_name`.
+- Ignora cualquier campo que no esté en la estructura definida del esquema de fiduciary balance.
+- Sé estricto con los formatos de fechas y valores numéricos.
+- Verifica que cada dato corresponda exactamente a la categoría definida por el nombre del campo.
+- Penaliza severamente datos que no correspondan al tipo de documento de saldos fiduciarios.
+- Todos los scores deben ser numéricos de punto flotante y no strings u otro formato.
+
+### Salida Requerida:
+Devuelve únicamente un JSON con la siguiente estructura:
+```json
+{{
+  "scores": {{
+    "bankName": <valor entre 0 y 1>,
+    "bankNit": <valor entre 0 y 1>,
+    "accountHolder": <valor entre 0 y 1>,
+    "currency": <valor entre 0 y 1>,
+    "balanceDate": <valor entre 0 y 1>,
+    "totalOrders": <valor entre 0 y 1>,
+    "totalOrdersExchange": <valor entre 0 y 1>,
+    "totalOrdersAvailable": <valor entre 0 y 1>,
+    "totalAccounts": <valor entre 0 y 1>,
+    "totalAccountsExchange": <valor entre 0 y 1>,
+    "totalAccountsAvailable": <valor entre 0 y 1>,
+    "detail": [
+      {{
+        "accountNumber": <valor entre 0 y 1>,
+        "accountType": <valor entre 0 y 1>,
+        "totalBalance": <valor entre 0 y 1>,
+        "exchangeBalance": <valor entre 0 y 1>,
+        "availableBalance": <valor entre 0 y 1>,
+        "fund": <valor entre 0 y 1>,
+        "date": <valor entre 0 y 1>
+      }}
+    ]
+  }},
+  "explicacion": "Detalle de los errores o inconsistencias encontrados en cada campo (dejar vacío si todo es correcto)."
+}}
+```
+Donde:
+- `scores`: Puntajes individuales para cada campo basado en las métricas expuestas.
+- `balanceDetail`: Evaluación individual para cada objeto en el array "balanceDetail" del JSON original.
+- `explicacion`: Breve informe de los errores encontrados, especificando el tipo de fiduciaria detectada y las validaciones aplicadas. Si no hay errores significativos, deja esta sección vacía.
+
+Información a validar:
+{df_data}
+'''

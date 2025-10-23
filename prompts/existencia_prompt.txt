@@ -1,0 +1,111 @@
+'''\
+Dado el siguiente documento de certificado de existencia y representación legal, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que un certificado de existencia y representación legal generalmente contiene los siguientes elementos:
+- Información básica de la empresa (razón social, NIT, matrícula mercantil)
+- Datos de constitución y vigencia
+- Información de domicilio y contacto
+- Objeto social y actividad económica
+- Información de capital y estructura societaria
+- Datos de socios y su participación
+- Representantes legales (principales y suplentes)
+- Establecimientos de comercio
+- Información del revisor fiscal
+- Facultades y limitaciones
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "expeditionDate": "Fecha de expedición del certificado en formato YYYY-MM-DD",
+    "receiptNumber": "Número de recibo del certificado",
+    "verificationCode": "Código de verificación del certificado",
+    "social": "Razón social completa de la empresa",
+    "acronym": "Sigla o nombre comercial de la empresa",
+    "nit": "NIT completo con dígito de verificación (formato: XXXXXXXXX-X)",
+    "legalOrganization": "Tipo de organización jurídica (SAS, LTDA, S.A., etc.)",
+    "category": "Categoría de la empresa (Principal, Sucursal, etc.)",
+    "comercialRegistration": "Número de matrícula mercantil",
+    "enrollmentDate": "Fecha de matrícula mercantil en formato YYYY-MM-DD",
+    "address": "Ciudad de domicilio principal",
+    "mainAddress": "Dirección del domicilio principal",
+    "commercialTel": "Teléfono comercial principal",
+    "commercialEmail": "Correo electrónico comercial principal",
+    "web": "Sitio web de la empresa",
+    "constitutionDate": "Fecha de constitución de la empresa en formato YYYY-MM-DD",
+    "deed": "Número de escritura pública de constitución",
+    "notary": "Notaría donde se otorgó la escritura de constitución",
+    "effectiveDate": "Fecha hasta la cual tiene vigencia la empresa en formato YYYY-MM-DD",
+    "socialObject": "Descripción completa del objeto social",
+    "ciiu": "Código CIIU de la actividad principal",
+    "ciiuDescription": "Descripción de la actividad económica principal",
+    "economicSector": "Sector económico al que pertenece",
+    "totalAssets": "Activo total reportado (valor numérico)",
+    "companySize": "Tamaño de la empresa (Micro, Pequeña, Mediana, Grande)",
+    "ordinaryActivityIncome": "Ingresos por actividad ordinaria (valor numérico)",
+    "capitalType": "Tipo de capital (Social, Suscrito, Pagado, etc.)",
+    "capitalValue": "Valor total del capital (valor numérico)",
+    "representativePowers": "Descripción de las facultades del representante legal",
+    "representativeLimits": "Limitaciones del representante legal",
+    "fiscalReviewer": "Nombre del revisor fiscal principal",
+    "enrollmentStatus": "Estado de la matrícula (Activa, Suspendida, Cancelada)",
+    "establishments": [
+        {
+            "name": "Nombre del establecimiento de comercio",
+            "registration": "Matrícula del establecimiento",
+            "registrationDate": "Fecha de matrícula del establecimiento en formato YYYY-MM-DD",
+            "address": "Dirección del establecimiento",
+            "city": "Ciudad donde está ubicado el establecimiento",
+            "tel_1": "Primer teléfono del establecimiento",
+            "tel_2": "Segundo teléfono del establecimiento",
+            "email": "Correo electrónico del establecimiento",
+            "mainActivity": "Código CIIU de la actividad principal",
+            "activityDescription": "Descripción de la actividad del establecimiento",
+            "establishmentValue": "Valor del establecimiento (valor numérico)"
+        }
+    ],
+    "legalRepresentatives": [
+        {
+            
+            "name": "Nombre completo del representante legal",
+            "position": "Cargo del representante (Gerente General, Gerente, etc.)",
+            "idType": "Tipo de identificación (CC, CE, etc.)",
+            "idNumber": "Número de identificación",
+            "isSubstitute": "Indica si es suplente (Si/No)",
+            "namingDate": "Fecha de nombramiento en formato YYYY-MM-DD",
+            "namingDoc": "Documento que sustenta el nombramiento"
+        }
+    ],
+    "partners": [
+        {
+            "name": "Nombre completo del socio",
+            "idType": "Tipo de identificación del socio (CC, CE, NIT, etc.)",
+            "idNumber": "Número de identificación del socio",
+            "sharesNumber": "Número de cuotas o acciones que posee (numérico)",
+            "participationValue": "Valor de la participación (valor numérico)",
+            "participationPercent": "Porcentaje de participación (valor numérico)"
+        }
+    ],
+    
+    
+    
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Si hay múltiples socios, representantes legales o establecimientos, incluye todos en sus respectivos arrays.
+3. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null (para números y objetos) o "" (para strings).
+4. Las fechas deben estar en formato YYYY-MM-DD.
+5. Para los valores numéricos, incluye únicamente los valores numéricos sin símbolos de moneda ni separadores de miles. Solo usa punto decimal si es necesario y con dos cifras decimales.
+6. El NIT debe incluir el dígito de verificación separado por guión.
+7. Para los campos que requieren valores "Si/No", usa exactamente estos valores.
+8. Los códigos CIIU deben mantener su formato original (ejemplo: C2512, C2592).
+9. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+10. Para los representantes legales, identifica claramente si son principales o suplentes según la información del documento.
+11. Si el documento menciona reformas o modificaciones, extrae la información más reciente disponible.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''

@@ -1,0 +1,122 @@
+'''\
+Dado el siguiente documento de un informe de saldos de una fiduciaria, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en la imagen o documento de los saldos. NUNCA inventes información ni hagas suposiciones.
+Entre los campos del JSON ten en cuenta estas instrucciones especificas para los siguientes campos:
+
+            "accountNumber":"El numero del encargo, puede llamarse 'Encargo' o 'Identificacion' o 'Inversion'. Expresalo como un string",
+
+            "accountType":"Siempre llenalo como 'encargo'",
+
+            "totalBalance":"Campo asociado a 'Saldo Total' o en el caso de Fiduciaria Alianza y Fiduciaria Davivienda 'Saldo' (numerico postivo)  ",
+
+            "exchangeBalance":"Campo asociado a 'Saldo Canje' (numerico postivo) solo esta en Fiduciaria Bogotá",
+
+            "availableBalance":"Campo asociado a 'Saldo Disponible' o 'Disponible' o en el caso de Fiduciaria Alianza 'Saldo', no importa que sea igual a totalBalance en Fiduciaria Alianza (numerico postivo)", extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+
+
+Sólamente retorna la información que esté presente en la imagen o documento de los saldos. NUNCA inventes información ni hagas suposiciones.
+NUNCA llenes un campo con información que no esté en el documento, si no puedes encontrar un campo, déjalo como null o "" según corresponda.
+No repitas encargos o cuentas en el arreglo balanceDetail, cada encargo o cuenta debe ser un objeto único en el arreglo.
+
+
+
+
+Para verificar la autenticidad, ten en cuenta que un documento de un informe de saldos suele tener elementos específicos como:
+
+-Nombre de fiduciaria y ocasionalmente un NIT
+
+-Encargos con sus respectivos saldos
+
+
+
+Existen 3 tipos de documentos de saldos:
+
+-Fiduciaria Davivienda
+
+-Fiduciaria Bogotá
+
+-Fiduciaria Alianza
+
+
+
+
+
+Lo siguiente es exclusivo SOLO PARA Fiduciaria Bogotá, antes de las tablas de los totales al final van a tener tablas que muestran los detalles de los
+
+balances mas a detalle. Existen 2 tipos de estas tablas:
+
+-Tablas de encargos: Las identificas ya que tienen un encabezado color gris con el nombre del proyecto
+
+-Tablas de cuentas: El encabezado de la primera columna dice 'Cuentas'
+
+Ten en cuenta estas tablas porque usaras tabla de encargos para "balanceDetail" en donde cada fila es un objeto del arreglo ten mucho cuidado con solo leer las filas una vez y no repetir encargos.
+
+Adicionalmente estas tablas en la ultima fila tienen una fila de totales la cual no deberas tomar como un objeto. Ignora la informacion de las tablas de cuentas
+
+Para los campos totalOrders a totalAccountsAvailable, localiza y extrae los valores exclusivamente de las tablas tituladas 'Total General Encargos' y 'Total General Cuentas' que se encuentran al final del documento.
+Para estos campos ignora cualquier otra tabla que no sea la de totales, ya que estas pueden contener información adicional pero no son relevantes para los campos solicitados.
+Si es necesario llena estos campos de ultima ya que son las ultimas 2 tablas de todo el documento y son las unicas que contienen los totales de encargos y cuentas.
+
+FIN DE INSTRUCCIONES EXCLUSIVAS PARA Fiduciaria Bogotá
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+
+
+```json
+
+{
+
+    "bankName": "Nombre del banco o fiducia, suele estar en la parte superior del documento, solo puedes usar los nombres: 'Fiduciaria Davivienda', 'Fiduciaria Bogotá', 'Fiduciaria Alianza' si el campo esta muy lejos de parecerse a uno de estos, llenalo con null o """,
+
+    "bankNit": "Numero de NIT del banco o fiducia que emite este documento, si el digito de verificacion esta presente (un numero despues de un '-') no incluir este digito. Este solo lo encontraras en Fiduciaria Bogotá",
+
+    "accountHolder": "El nombre de la empresa que solicita este documento (generalmente se encuentra en la parte superior izquierda abajo del logo de la fiduciaria). Solo encuentra este campo en Fiduciaria Bogotá",
+
+    "currency": "Busca donde esten los valores numericos una moneda, esta se puede ver como 'COP' o como 'USD', si no encuentras ninguno llena este campo con COP, NO LO LLENES CON $ ni con NULO",
+
+    "balanceDate": "La fecha en la parte superior que va despues de 'Saldos a:', esta suele estar en formato YYYY-MM-DD, expresala en formato YYYY-MM-DD. En Fiduciaria Davivienda no lo encontraras",
+
+    "totalOrders": "En la parte inferior el 'Saldo Total' de la tabla que se llama 'Total General Encargos' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+
+    "totalOrdersExchange": "En la parte inferior el 'Saldo Canje' de la tabla que se llama 'Total General Encargos' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+
+    "totalOrdersAvailable": "En la parte inferior el 'Saldo Disponible' de la tabla que se llama 'Total General Encargos' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+
+    "totalAccounts": "En la parte inferior el 'Saldo Total' de la tabla que se llama 'Total General Cuentas' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+
+    "totalAccountsExchange": "En la parte inferior el 'Saldo Canje' de la tabla que se llama 'Total General Cuentas' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+
+    "totalAccountsAvailable": "En la parte inferior el 'Saldo Disponible' de la tabla que se llama 'Total General Cuentas' (numerico postivo) solo lo encontraras en Fiduciaria Bogotá",
+    
+    "details":[
+
+            "accountNumber":"El numero del encargo, puede llamarse 'Encargo' o 'Identificacion' o 'Inversion'. Expresalo como un string",
+
+            "accountType":"Siempre llenalo como 'encargo'",
+
+            "totalBalance":"Campo asociado a 'Saldo Total' o en el caso de Fiduciaria Alianza y Fiduciaria Davivienda 'Saldo' (numerico postivo)  ",
+
+            "exchangeBalance":"Campo asociado a 'Saldo Canje' (numerico postivo) solo esta en Fiduciaria Bogotá",
+
+            "availableBalance":"Campo asociado a 'Saldo Disponible' o 'Disponible' o en el caso de Fiduciaria Alianza 'Saldo', no importa que sea igual a totalBalance en Fiduciaria Alianza (numerico postivo)",
+
+            "fund":"La cadena de texto que se enceuntra siempre en el encabezado del encargo en Fiduciaria Davivienda, este suele empezar con 'Identificacion' y seguido tiene un numero de identificacion, excluye la palabra Identificacion y el numero que le sigue,en Fiduciaria Bogotá esta en el campo Tercero/Alias, en Fiduciaria Alianza esta en 'Nombre', en estos 2 casos incluye todo el texto que aparece en estos",
+
+            "date": "La fecha de la cuenta, si no esta presente llenalo con la fecha del balanceDate"
+
+        ],    
+    
+}
+
+```
+
+TODOS LOS VALORES NUMERICOS LOS DEBES DEVOLVER COMO SOLO NUMERICOS, por ejemplo no devuelvas "10.5", devuelve 10.5
+
+
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+
+'''

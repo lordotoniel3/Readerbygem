@@ -1,0 +1,94 @@
+'''\
+Dado el siguiente documento de un extracto bancario, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que un extracto bancario generalmente contiene los siguientes elementos:
+- Información del banco (nombre, dirección, teléfono)
+- Información del titular de la cuenta (nombre, número de cliente, dirección)
+- Datos de la cuenta (número de cuenta, tipo de cuenta)
+- Período del extracto (fecha inicial y final)
+- Saldos (anterior, actual)
+- Lista de movimientos financieros (fecha, descripción, valor, tipo)
+- Resumen de operaciones (depósitos, retiros, comisiones)
+- Información adicional (mensajes del banco, promociones)
+
+**IMPORTANTE:**
+- Si el documento incluye una lista de movimientos o transacciones, debes llenar el campo `movements` con cada uno como un objeto individual.
+- Si el documento contiene información sobre **encargos** (como clientes o terceros asociados al extracto), cada encargo debe representarse en `trusts` como un objeto individual, y puede contener su propia lista de movimientos.
+
+
+
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "bankName": "Nombre del banco emisor del extracto",
+    "bankAddress": "Dirección completa del banco",
+    "bankTel": "Teléfono de contacto del banco",
+    "holderName": "Nombre completo del titular de la cuenta",
+    "clientNumber": "Número de identificación del cliente en el banco",
+    "holderAddress": "Dirección completa del titular de la cuenta",
+    "accountType": "Tipo de cuenta (ejemplo: Ahorro, Corriente, Nómina)",
+    "accountNumber": "Número completo de la cuenta bancaria",
+    "currency": "Código de la moneda (ejemplo: COP, USD, EUR)",
+    "startDatePeriod": "Fecha inicial del período del extracto en formato YYYY-MM-DD",
+    "endDatePeriod": "Fecha final del período del extracto en formato YYYY-MM-DD",
+    "previousBalance": "Saldo al inicio del período (numérico)",
+    "actualBalance": "Saldo al final del período (numérico)",
+    "totalDeposits": "Suma total de depósitos en el período (numérico)",
+    "totalWithdrawals": "Suma total de retiros en el período (numérico)",
+    "totalComissions": "Suma total de comisiones cobradas en el período (numérico)",
+    "interestRate": "Tasa de interés aplicada en el período (numérico)",
+    "interestEarned": "Intereses generados en el período (numérico)",
+    "withholding": "Valor de retenciones aplicadas (numérico)",
+    "nextCutOffDate": "Fecha del próximo corte en formato YYYY-MM-DD",
+    "statementIssueDate": "Fecha de emisión del extracto en formato YYYY-MM-DD",
+    "statementNumber": "Número de identificación del extracto",
+    "movements": [
+        {
+            "date": "Fecha de la transacción en formato YYYY-MM-DD",
+            "description": "Descripción o concepto de la transacción",
+            "reference": "Número de referencia o documento asociado",
+            "value": "Monto de la transacción (numérico positivo)",
+            "type": "Tipo de movimiento (ejemplo: débito, crédito)",
+            "subsequentBalance": "Saldo después de la transacción (numérico)"
+        }
+    ],
+
+    "trusts": [
+        {
+            "trustName": "nombre del encargo (cliente o clientes, fondo, asociacion o NIT)",
+            "trustDate": "Fecha del encargo, o expedicion del encargo (si está disponible) en formato DD-MM-YYYY",
+            "trustValue": "Saldo total o saldo final mes (si se especifica)",
+            "concept": "Descripción de la inversión o propósito del encargo",
+            "movements": [
+                {
+                   "date": "Fecha de la transacción en formato DD-MM-YYYY",
+                    "description": "Descripción o concepto de la transacción",
+                    "reference": "Número de referencia o documento asociado",
+                    "value": "Monto de la transacción (numérico positivo)",
+                    "type": "Tipo de movimiento (ejemplo: débito, crédito)",
+                    "subsequentBalance": "Saldo después de la transacción (numérico)"
+                }
+            ]
+        }
+    ]
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Para los valores monetarios, incluye únicamente los valores numéricos sin símbolos de moneda ni separadores de miles.
+3. Para los movimientos con valores negativos (débitos, retiros, pagos), mantén el signo negativo en el campo "valor".
+4. Si hay múltiples movimientos financieros, incluye todos en el array "movements".
+5. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo vacío (para números y objetos) o "" (para strings).
+6. Las fechas deben estar en formato YYYY-MM-DD.
+7. El campo "tipo" en los movimientos debe ser "débito" para transacciones que disminuyen el saldo y "crédito" para las que lo aumentan.
+8. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+9. Incluye todas las transacciones en movements o en la lista del encargo si aplica.
+10. Si hay varios encargos, crea un objeto para cada uno. Si hay solo uno, colócalo igual dentro de trusts.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como "" según corresponda.
+'''

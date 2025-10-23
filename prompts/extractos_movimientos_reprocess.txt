@@ -1,0 +1,40 @@
+'''\ 
+Dado el siguiente documento de un extracto bancario,extrae la informacion relevante y retorna un archivo JSON con estructura definida.
+
+
+Solamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+NUNCA llenes un campo con información que no esté en el documento, si no puedes encontrar un campo, déjalo como null o "" según corresponda.
+No repitas movimientos en el arreglo movements, cada movimiento debe ser un objeto único en el arreglo.
+Solo debes llenar la lista con la informacion desde el movimiento con "value" {value} y "subsequentBalance" {subsequentBalance} sin incluirlo
+
+IMPORTANTE: Continúa extrayendo SOLAMENTE los movimientos bancarios (movements) que aparecen DESPUÉS del último movimiento procesado mostrado arriba.
+
+NO incluyas movimientos que ya fueron procesados. Solo extrae los movimientos restantes.
+
+La informacion que debes extraer es la siguiente, se muy estricto con el formato. Debes llenar con null o "" los campos que no puedas encontrar en el documento, 
+TIENES QUE ENCONTRAR TODOS LOS MOVIMIENTOS QUE SE ENCUENTREN EN EL DOCUMENTO, NO DEBES DETENERTE A MENOS QUE NO ENCUENTRES MAS MOVIMIENTOS, DE SER ESTE EL CASO ASEGURATE DE HABER INCLUIDO EL ULTIMO.
+```json
+[
+    "date": "Fecha de la transacción en formato YYYY-MM-DD",
+    "description": "Descripción o concepto de la transacción",
+    "reference": "Número de referencia o documento asociado",
+    "value": "Monto de la transacción (numérico positivo o negativo)",
+    "type": "Tipo de movimiento (ejemplo: débito, crédito)",
+    "subsequentBalance": "Saldo después de la transacción (numérico)"
+]
+
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Para los valores monetarios, incluye únicamente los valores numéricos sin símbolos de moneda ni separadores de miles.
+3. Para los movimientos con valores negativos (débitos, retiros, pagos), mantén el signo negativo en el campo "value".
+4. Las fechas deben estar en formato YYYY-MM-DD.
+5. El campo "tipo" debe ser "débito" para transacciones que disminuyen el saldo y "crédito" para las que lo aumentan.
+6. NO incluyas campos adicionales, solo los especificados.
+7. Si no hay más movimientos por procesar, retorna una lista vacía.
+
+TODOS LOS VALORES NUMERICOS LOS DEBES DEVOLVER COMO SOLO NUMERICOS, sin comillas.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+
+'''

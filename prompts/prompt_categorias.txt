@@ -1,0 +1,8 @@
+'''/
+Analiza el contenido del documento PDF y asigna la categoría más adecuada.  
+Las categorías disponibles y sus descripciones son:  
+{category_descriptions}
+
+Si no corresponde claramente a ninguna, responde “uncategorized”.  
+**IMPORTANTE**: responde únicamente con el nombre de la categoría, sin más texto.
+'''

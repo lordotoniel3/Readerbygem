@@ -1,0 +1,97 @@
+'''\
+'''
+Dado el siguiente documento de Registro Único Tributario (RUT) conforme a la normativa de la DIAN en Colombia, extrae la información relevante y retorna un archivo JSON con estructura definida.
+
+Sólamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+
+Para la extracción, ten en cuenta que un documento RUT generalmente contiene los siguientes elementos:
+- Información básica del contribuyente (nombre, tipo y número de identificación)
+- Datos de ubicación (dirección, municipio, departamento)
+- Información de actividades económicas (códigos CIIU)
+- Responsabilidades, calidades y atributos fiscales
+- Información de establecimientos, sucursales o agencias
+- Datos de contacto (teléfono, email)
+- Fechas relevantes (expedición, actualización)
+
+El JSON resultado debe tener la estructura dada a continuación, donde se debe llenar como null o "" los campos de los cuales no se tenga información:
+
+```json
+{
+    "formNumber": "Número del formulario RUT",
+    "expeditionDate": "Fecha de expedición del RUT en formato YYYY-MM-DD",
+    "lastUpdateDate": "Fecha de la última actualización en formato YYYY-MM-DD",
+    "documentType": "Tipo de documento de identidad (CC, CE, NIT, etc.)",
+    "documentNumber": "Número del documento de identidad sin dígito de verificación",
+    "dv": "Dígito de verificación (para NIT)",
+    "companyName": "Razón social (para personas jurídicas)",
+    "firstSurname": "Apellido(s) completo(s) en mayúsculas (para personas naturales)",
+    "firstName": "Nombre(s) completo(s) en mayúsculas (para personas naturales)",
+    "birthday": "Fecha de nacimiento o constitución en formato YYYY-MM-DD",
+    "birthCountry": "País de nacimiento o constitución",
+    "birthDepartment": "Departamento de nacimiento o constitución (para Colombia)",
+    "birthCity": "Ciudad de nacimiento o constitución (para Colombia)",
+    "address": "Dirección principal según RUT",
+    "country": "País de domicilio",
+    "department": "Departamento de domicilio (para Colombia)",
+    "city": "Ciudad de domicilio (para Colombia)",
+    "email": "Correo electrónico registrado",
+    "phone": "Número de teléfono fijo",
+    "cellphone": "Número de teléfono móvil",
+    "electronicNotification": "Indica si está registrado para notificación electrónica (Si/No)",
+    "contributorType": "Tipo de contribuyente (Persona Natural, Persona Jurídica, etc.)",
+    "regime": "Régimen tributario al que pertenece",
+    "activityStartDate": "Fecha de inicio de actividades en formato YYYY-MM-DD",
+    "rutStatus": "Estado del RUT (Activo, Suspendido, Cancelado)",
+    "activities": [
+        {
+            "id": "Identificador interno de la actividad si existe",
+            "ciuuCode": "Código CIIU de la actividad económica",
+            "description": "Descripción de la actividad económica",
+            "mainActivity": "Indica si es la actividad principal (Si/No)",
+            "startDate": "Fecha de inicio de la actividad en formato YYYY-MM-DD"
+        }
+    ],
+    "responsibilities": [
+        {
+            "id": "Identificador interno de la responsabilidad si existe",
+            "code": "Código de la responsabilidad tributaria",
+            "description": "Descripción de la responsabilidad tributaria",
+            "startDate": "Fecha desde la cual aplica en formato YYYY-MM-DD",
+            "endDate": "Fecha hasta la cual aplica en formato YYYY-MM-DD (si tiene)"
+        }
+    ],
+    "establishments": [
+        {
+            "id": "Identificador interno del establecimiento si existe",
+            "name": "Nombre del establecimiento",
+            "address": "Dirección del establecimiento",
+            "city": "Ciudad donde está ubicado el establecimiento",
+            "department": "Departamento donde está ubicado el establecimiento",
+            "mainActivity": "Código CIIU de la actividad principal del establecimiento",
+            "openingDate": "Fecha de apertura del establecimiento en formato YYYY-MM-DD"
+        }
+    ],
+    "representatives": {
+        "documentType": "Tipo de documento del representante legal",
+        "documentNumber": "Número de documento del representante legal",
+        "fullName": "Nombre completo en mayúsculas del representante legal",
+        "position": "Cargo del representante legal"
+    }
+}
+```
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Si hay múltiples actividades económicas, responsabilidades o establecimientos, incluye todos en sus respectivos arrays.
+3. Si un campo no aparece en el documento o no puedes extraerlo con certeza, déjalo como null (para números y objetos) o "" (para strings).
+4. Las fechas deben estar en formato YYYY-MM-DD.
+5. Los tipos de documento deben seguir la nomenclatura estándar de la DIAN: CC (Cédula de Ciudadanía), CE (Cédula de Extranjería), NIT (Número de Identificación Tributaria), PA (Pasaporte), PE (Permiso Especial de Permanencia), etc.
+6. Para los códigos de responsabilidades tributarias, mantén el código numérico exacto que aparece en el documento.
+7. Asegúrate de un manejo correcto de tildes usando codificación UTF-8.
+8. Las responsabilidades tributarias generalmente tienen códigos numéricos asignados por la DIAN (por ejemplo, 05, 07, 09, etc.). Incluye tanto el código como su descripción cuando esté disponible.
+9. El dígito de verificación (DV) debe ser incluido como un campo separado, no como parte del número de documento.
+10. Para los campos que requieren valores "Si/No", usa exactamente estos valores y no variaciones como "Sí", "S", "N", etc.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+'''
+'''

@@ -1,0 +1,51 @@
+'''\ 
+Dado el siguiente documento de un extracto bancario,extrae la informacion relevante y retorna un archivo JSON con estructura definida.
+
+Solamente retorna la información que esté presente en el documento. NUNCA inventes información ni hagas suposiciones.
+NUNCA llenes un campo con información que no esté en el documento, si no puedes encontrar un campo, déjalo como null o "" según corresponda.
+No repitas movimientos en el arreglo movements, cada movimiento debe ser un objeto único en el arreglo.
+Solo debes llenar la lista con la informacion desde el encargo con "trustName" {trustName} y "trustDate" {trustDate} sin incluirlo.
+
+IMPORTANTE: Continúa extrayendo SOLAMENTE los encargos (trusts) que aparecen DESPUÉS del último encargo procesado mostrado arriba.
+
+NO incluyas encargos que ya fueron procesados. Solo extrae los encargos restantes.
+
+La informacion que debes extraer es la siguiente, se muy estricto con el formato. Debes llenar con null o "" los campos que no puedas encontrar en el documento, 
+TIENES QUE ENCONTRAR TODOS LOS ENCARGOS QUE SE ENCUENTREN EN EL DOCUMENTO, NO DEBES DETENERTE A MENOS QUE NO ENCUENTRES MAS ENCARGOS, DE SER ESTE EL CASO ASEGURATE DE HABER INCLUIDO EL ULTIMO.
+
+```json
+[
+    {
+            "trustName": "nombre del encargo (cliente o clientes, fondo, asociacion o NIT)",
+            "trustDate": "Fecha del encargo, o expedicion del encargo (si está disponible) en formato YYYY-MM-DD",
+            "trustValue": "Saldo total o saldo final mes (si se especifica)",
+            "concept": "Descripción de la inversión o propósito del encargo",
+            "movements": [
+                {
+                   "date": "Fecha de la transacción en formato YYYY-MM-DD",
+                    "description": "Descripción o concepto de la transacción",
+                    "reference": "Número de referencia o documento asociado",
+                    "value": "Monto de la transacción (numérico positivo)",
+                    "type": "Tipo de movimiento (ejemplo: débito, crédito)",
+                    "subsequentBalance": "Saldo después de la transacción (numérico)"
+                }
+            ]
+        }
+]
+
+
+Instrucciones específicas:
+1. Extrae SOLAMENTE la información presente en el documento.
+2. Para los valores monetarios, incluye únicamente los valores numéricos sin símbolos de moneda ni separadores de miles.
+3. Para los movimientos con valores negativos (débitos, retiros, pagos), mantén el signo negativo en el campo "value".
+4. Las fechas deben estar en formato YYYY-MM-DD para encargos y movimientos dentro de encargos.
+5. El campo "tipo" en movimientos debe ser "débito" para transacciones que disminuyen el saldo y "crédito" para las que lo aumentan.
+6. Si un encargo no tiene movimientos, deja el array "movements" vacío [].
+7. Si no hay más encargos por procesar, retorna una lista vacía.
+8. NO incluyas campos adicionales, solo los especificados.
+
+TODOS LOS VALORES NUMERICOS LOS DEBES DEVOLVER COMO SOLO NUMERICOS, sin comillas.
+
+No incluyas más campos de los que están en el formato de salida. Si no puedes identificar algún dato con seguridad, déjalo como null o "" según corresponda.
+
+'''
